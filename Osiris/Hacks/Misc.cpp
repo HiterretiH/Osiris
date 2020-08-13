@@ -891,7 +891,8 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         else if (fDistanceToWall(2) < config->misc.distance) {
             angles.y += 1.5;
         }
-        else if (localPlayer->velocity().length() < 75) {
+        
+        if (!(distanceToWall < config->misc.distance) && localPlayer->velocity().length() < 75) {
             ::walkbot_counter++;
             if (::walkbot_counter == 50) {
                 ::walkbot_counter = 0;
