@@ -900,8 +900,10 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         else
             ::walkbot_counter = 0;
 
-        if (fDistanceToWall(3) > 70 && fDistanceToWall(4) < 50)
+        if (fDistanceToWall(3) > 70 && fDistanceToWall(4) < 50) {
             cmd->buttons |= UserCmd::IN_JUMP;
+            angles.y += 1;
+        }
 
         if (fDistanceToWall(5) > 85)
             cmd->buttons |= UserCmd::IN_DUCK;
