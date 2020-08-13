@@ -892,7 +892,7 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
             angles.y += 1.5;
         }
         
-        if (localPlayer->velocity().length() < 75) {
+        if (localPlayer->velocity().length() < 100) {
             ::walkbot_counter++;
             if (::walkbot_counter == 50) {
                 ::walkbot_counter = 0;
@@ -900,7 +900,7 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
             }
         }
 
-        if (localPlayer->velocity().length2D() >= 75)
+        if (localPlayer->velocity().length2D() >= 100)
             ::walkbot_counter = 0;
 
         if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && fDistanceToWall(5) < 66) {
