@@ -879,6 +879,7 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         angles.z = 0;
 
         float distanceToWall = fDistanceToWall();
+        float velocity = localPlayer->velocity().length();
 
         if (distanceToWall < config->misc.distance) {
             float positiveDist = fDistanceToWall(0, 10), negativeDist = fDistanceToWall(0, -10),
@@ -891,17 +892,18 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         else if (fDistanceToWall(2) < config->misc.distance) {
             angles.y += 1.5;
         }
-        else if (localPlayer->velocity().length() < 75) {
+        else if (velocity < 75) {
             ::walkbot_counter++;
-            if (::walkbot_counter > 50) {
+            if (::walkbot_counter == 50) {
                 ::walkbot_counter = 0;
                 angles.y += 120;
             }
         }
-        else
+
+        if (velocity >= 75)
             ::walkbot_counter = 0;
 
-        if (fDistanceToWall(3) > 70 && fDistanceToWall(4) < 50 && fDistanceToWall(5) < 66) {
+        if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && fDistanceToWall(5) < 66) {
             cmd->buttons |= UserCmd::IN_JUMP;
             angles.y += 1;
         }
