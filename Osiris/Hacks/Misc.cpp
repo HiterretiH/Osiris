@@ -906,6 +906,9 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         if (fDistanceToWall(5) > 85)
             cmd->buttons |= UserCmd::IN_DUCK;
 
+        if (localPlayer->moveType() == MoveType::LADDER)
+            cmd->buttons |= UserCmd::IN_JUMP;
+
         while (angles.y > 180.0f)
             angles.y -= 360.0f;
         while (angles.y < -180.0f)
