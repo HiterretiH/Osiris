@@ -890,9 +890,6 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         else if (fDistanceToWall(2) < config->misc.distance) {
             angles.y += 1.5;
         }
-        else if (fDistanceToWall(3) > 70 && fDistanceToWall(4) < 50) {
-            cmd->buttons |= UserCmd::IN_JUMP;
-        }
         else if (localPlayer->velocity().length() < 75) {
             ::walkbot_counter++;
             if (::walkbot_counter > 50) {
@@ -902,6 +899,9 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         }
         else
             ::walkbot_counter = 0;
+
+        if (fDistanceToWall(3) > 70 && fDistanceToWall(4) < 50)
+            cmd->buttons |= UserCmd::IN_JUMP;
 
         if (fDistanceToWall(5) > 85)
             cmd->buttons |= UserCmd::IN_DUCK;
