@@ -805,3 +805,112 @@ void Misc::purchaseList(GameEvent* event) noexcept
         ImGui::End();
     }
 }
+
+int walkbot_counter = 0;
+void Misc::walkbot(UserCmd* cmd) noexcept {
+    if (!config->misc.walkbot)
+        return;
+    if (!localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon() || !localPlayer->getActiveWeapon()->clip())
+        return;
+
+    auto dcos = [&](float angle) -> float { return cos(degreesToRadians(angle)); };
+    auto dsin = [&](float angle) -> float { return sin(degreesToRadians(angle)); };
+
+    auto bEnemiesVisible = [&]() -> bool {
+        auto boneList = std::initializer_list{ 3, 4, 5, 6, 7, 8 };
+        for (int i = 1; i <= interfaces->engine->getMaxClients(); i++) {
+            auto entity = interfaces->entityList->getEntity(i);
+            if (!entity || entity == localPlayer.get() || entity->isDormant() || !entity->isAlive() || !entity->isOtherEnemy(localPlayer.get()))
+                continue;
+
+            for (auto bone : boneList) {
+                auto bonePosition = entity->getBonePosition(bone);
+                if (entity->isVisible(bonePosition))
+                    return true;
+            }
+        }
+        return false;
+    };
+
+    auto fDistanceToWall = [&](int mode = 0, float ang = 0) -> float {
+        Vector src = localPlayer->getEyePosition(), dst;
+        Trace tr;
+        ang = cmd->viewangles.y + ang;
+
+        if (mode == 1 or mode == 2) { // left and right
+            Vector delta = (mode == 1) ? Vector{dcos(ang - 90), dsin(ang - 90), 0} : Vector{dcos(ang + 90), dsin(ang + 90), 0};
+            float dist;
+            dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
+            for (int d = 4; d < 16; d+=4) {
+                src += delta;
+                dst += delta;
+                interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
+                dist = (tr.endpos - src).length();
+                if (dist < config->misc.distance)
+                    return dist;
+            }
+        }
+        else if (mode == 3) // higher than obstacle with max high
+            src -= Vector{ 0,0,2 };
+        else if (mode == 4) // low obstacle
+            src -= Vector{ 0,0,54 };
+        else if (mode == 5) { // under player
+            dst = src - Vector{ 0,0,100 };
+            interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
+            return (tr.endpos - src).length();
+        }
+
+        dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
+        interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
+
+        return (tr.endpos - src).length();
+    };
+
+
+    if (bEnemiesVisible()) {
+        cmd->forwardmove = 0;
+    }
+    else {
+        cmd->forwardmove = 450;
+        Vector angles = cmd->viewangles;
+        
+        angles.x = 0;
+        angles.z = 0;
+
+        float distanceToWall = fDistanceToWall();
+
+        if (distanceToWall < config->misc.distance) {
+            float positiveDist = fDistanceToWall(0, 10), negativeDist = fDistanceToWall(0, -10),
+                turnAngle = (config->misc.distance - distanceToWall) / config->misc.distance * 120;
+            angles.y += positiveDist < negativeDist ? -turnAngle * 1.1 : turnAngle;
+        }
+        else if (fDistanceToWall(1) < config->misc.distance) {
+            angles.y -= 1.5;
+        }
+        else if (fDistanceToWall(2) < config->misc.distance) {
+            angles.y += 1.5;
+        }
+        else if (fDistanceToWall(3) > 70 && fDistanceToWall(4) < 50) {
+            cmd->buttons |= UserCmd::IN_JUMP;
+        }
+        else if (localPlayer->velocity().length() < 75) {
+            ::walkbot_counter++;
+            if (::walkbot_counter > 50) {
+                ::walkbot_counter = 0;
+                angles.y += 120;
+            }
+        }
+        else
+            ::walkbot_counter = 0;
+
+        if (fDistanceToWall(5) > 85)
+            cmd->buttons |= UserCmd::IN_DUCK;
+
+        while (angles.y > 180.0f)
+            angles.y -= 360.0f;
+        while (angles.y < -180.0f)
+            angles.y += 360.0f;
+
+        interfaces->engine->setViewAngles(angles);
+    }
+}

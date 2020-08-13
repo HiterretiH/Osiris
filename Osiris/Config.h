@@ -36,7 +36,7 @@ public:
     };
 
     struct Aimbot {
-        bool enabled{ false };
+        bool enabled{ true };
         bool onKey{ false };
         int key{ 0 };
         int keyMode{ 0 };
@@ -44,14 +44,14 @@ public:
         bool silent{ false };
         bool friendlyFire{ false };
         bool visibleOnly{ true };
-        bool scopedOnly{ true };
+        bool scopedOnly{ false };
         bool ignoreFlash{ false };
         bool ignoreSmoke{ false };
-        bool autoShot{ false };
-        bool autoScope{ false };
-        float fov{ 0.0f };
-        float smooth{ 1.0f };
-        int bone{ 0 };
+        bool autoShot{ true };
+        bool autoScope{ true };
+        float fov{ 255.0f };
+        float smooth{ 10.0f };
+        int bone{ 1 };
         float maxAimInaccuracy{ 1.0f };
         float maxShotInaccuracy{ 1.0f };
         int minDamage{ 1 };
@@ -254,6 +254,8 @@ public:
         std::string customKillSound;
         std::string customHitSound;
         PurchaseList purchaseList;
+        bool walkbot{ true };
+        int distance{ 150 };
     } misc;
 
     struct Reportbot {

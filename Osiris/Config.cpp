@@ -555,6 +555,8 @@ static void from_json(const json& j, Config::Misc& m)
     read(j, "Kill sound", m.killSound);
     read<value_t::object>(j, "Custom Kill Sound", m.customKillSound);
     read<value_t::object>(j, "Purchase List", m.purchaseList);
+    read(j, "WalkBot", m.walkbot);
+    read(j, "Walkbot distance to wall", m.distance);
 }
 
 static void from_json(const json& j, Config::Reportbot& r)
@@ -924,6 +926,8 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Kill sound", killSound);
     WRITE("Custom Kill Sound", customKillSound);
     WRITE("Purchase List", purchaseList);
+    WRITE("WalkBot", walkbot);
+    WRITE("Walkbot distance to wall", distance);
 }
 
 static void to_json(json& j, const Config::Visuals::ColorCorrection& o, const Config::Visuals::ColorCorrection& dummy)
