@@ -849,6 +849,7 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
                 if (dist < config->misc.distance)
                     return dist;
             }
+            return dist;
         }
         else if (mode == 3) // higher than obstacle with max high
             src -= Vector{ 0,0,2 };
