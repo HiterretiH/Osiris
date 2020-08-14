@@ -903,7 +903,7 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         if (localPlayer->velocity().length2D() >= 100)
             ::walkbot_counter = 0;
 
-        if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && fDistanceToWall(5) < 66) {
+        if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && (localPlayer->flags() & 1)) {
             cmd->buttons |= UserCmd::IN_JUMP;
             angles.y += 1;
         }
