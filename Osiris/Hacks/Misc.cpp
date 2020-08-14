@@ -855,11 +855,6 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
             src -= Vector{ 0,0,2 };
         else if (mode == 4) // low obstacle
             src -= Vector{ 0,0,54 };
-        else if (mode == 5) { // under player
-            dst = src - Vector{ 0,0,100 };
-            interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
-            return (tr.endpos - src).length();
-        }
 
         dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
         interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
