@@ -50,7 +50,7 @@ public:
         bool autoShot{ true };
         bool autoScope{ true };
         float fov{ 255.0f };
-        float smooth{ 10.0f };
+        float smooth{ 8.0f };
         int bone{ 1 };
         float maxAimInaccuracy{ 1.0f };
         float maxShotInaccuracy{ 1.0f };
