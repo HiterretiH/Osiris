@@ -43,4 +43,5 @@ namespace Misc
     void killSound(GameEvent& event) noexcept;
     void purchaseList(GameEvent* event = nullptr) noexcept;
     void walkbot(UserCmd* cmd) noexcept;
+    void freezetime(GameEvent* event) noexcept;
 }

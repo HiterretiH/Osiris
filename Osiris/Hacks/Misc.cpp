@@ -807,10 +807,11 @@ void Misc::purchaseList(GameEvent* event) noexcept
 }
 
 int walkbot_counter = 0;
+bool freezetime;
 void Misc::walkbot(UserCmd* cmd) noexcept {
     if (!config->misc.walkbot)
         return;
-    if (!localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon() || !localPlayer->getActiveWeapon()->clip())
+    if (!localPlayer || !localPlayer->isAlive() || ::freezetime || !localPlayer->getActiveWeapon() || !localPlayer->getActiveWeapon()->clip())
         return;
 
     auto dcos = [&](float angle) -> float { return cos(degreesToRadians(angle)); };
@@ -916,5 +917,16 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
             angles.y += 360.0f;
 
         interfaces->engine->setViewAngles(angles);
+    }
+}
+
+void Misc::freezetime(GameEvent* event) noexcept {
+    switch (fnv::hashRuntime(event->getName())) {
+        case fnv::hash("round_start"):
+            ::freezetime = true;
+            break;
+        case fnv::hash("round_freeze_end"):
+            ::freezetime = false;
+            break;
     }
 }
