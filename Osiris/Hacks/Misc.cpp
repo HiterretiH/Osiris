@@ -873,20 +873,21 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         angles.x = 0;
         angles.z = 0;
 
-        float distanceToWall = fDistanceToWall();
+        float distanceToWall = fDistanceToWall(),
+            leftDistance = fDistanceToWall(1),
+            rightDistance = fDistanceToWall(2);
 
         if (distanceToWall < config->misc.distance) {
             float positiveDist = fDistanceToWall(0, 10), negativeDist = fDistanceToWall(0, -10),
                 turnAngle = (config->misc.distance - distanceToWall) / config->misc.distance * 120;
             angles.y += positiveDist < negativeDist ? -turnAngle * 1.1 : turnAngle;
         }
-        else if (fDistanceToWall(1) < config->misc.distance) {
-            angles.y -= 1.5;
+        else if (abs(leftDistance - rightDistance) > 5) {
+            if (leftDistance < config->misc.distance)
+                angles.y -= 1;
+            else if (rightDistance < config->misc.distance)
+                angles.y += 1;
         }
-        else if (fDistanceToWall(2) < config->misc.distance) {
-            angles.y += 1.5;
-        }
-        
         if (localPlayer->velocity().length() < 100) {
             ::walkbot_counter++;
             if (::walkbot_counter == 50) {
