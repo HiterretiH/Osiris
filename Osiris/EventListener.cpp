@@ -36,6 +36,7 @@ void EventListener::fireGameEvent(GameEvent* event)
 {
     switch (fnv::hashRuntime(event->getName())) {
     case fnv::hash("round_start"):
+        Misc::autobuy(event);
     case fnv::hash("round_freeze_end"):
         Misc::freezetime(event);
     case fnv::hash("item_purchase"):

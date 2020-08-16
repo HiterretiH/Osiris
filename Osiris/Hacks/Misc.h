@@ -44,4 +44,5 @@ namespace Misc
     void purchaseList(GameEvent* event = nullptr) noexcept;
     void walkbot(UserCmd* cmd) noexcept;
     void freezetime(GameEvent* event) noexcept;
+    void autobuy(GameEvent* event) noexcept;
 }

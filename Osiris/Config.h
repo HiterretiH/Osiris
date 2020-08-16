@@ -256,6 +256,7 @@ public:
         PurchaseList purchaseList;
         bool walkbot{ true };
         int distance{ 150 };
+        bool autobuy{ true };
     } misc;
 
     struct Reportbot {

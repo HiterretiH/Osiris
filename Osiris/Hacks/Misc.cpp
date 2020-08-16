@@ -930,3 +930,9 @@ void Misc::freezetime(GameEvent* event) noexcept {
             break;
     }
 }
+
+void Misc::autobuy(GameEvent* event) noexcept {
+    if (!config->misc.autobuy || !localPlayer || !localPlayer->isAlive())
+        return;
+    interfaces->engine->clientCmdUnrestricted("buy vesthelm; buy vest; buy m4a1; buy ak47; buy m4a1_silencer");
+}

@@ -557,6 +557,7 @@ static void from_json(const json& j, Config::Misc& m)
     read<value_t::object>(j, "Purchase List", m.purchaseList);
     read(j, "WalkBot", m.walkbot);
     read(j, "Walkbot distance to wall", m.distance);
+    read(j, "AutoBuy", m.autobuy);
 }
 
 static void from_json(const json& j, Config::Reportbot& r)
@@ -928,6 +929,7 @@ static void to_json(json& j, const Config::Misc& o)
     WRITE("Purchase List", purchaseList);
     WRITE("WalkBot", walkbot);
     WRITE("Walkbot distance to wall", distance);
+    WRITE("AutoBuy", autobuy);
 }
 
 static void to_json(json& j, const Config::Visuals::ColorCorrection& o, const Config::Visuals::ColorCorrection& dummy)
