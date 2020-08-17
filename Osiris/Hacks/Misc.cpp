@@ -935,8 +935,10 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
 }
 
 void Misc::freezetime(GameEvent* event) noexcept {
+    if (!config->misc.walkbot) return;
     switch (fnv::hashRuntime(event->getName())) {
         case fnv::hash("round_start"):
+            if (localPlayer) interfaces->engine->clientCmdUnrestricted("use weapon_knife; use weapon_c4; drop; slot2; slot1");
             ::freezetime = true;
             break;
         case fnv::hash("round_freeze_end"):
