@@ -811,7 +811,7 @@ bool freezetime;
 void Misc::walkbot(UserCmd* cmd) noexcept {
     if (!config->misc.walkbot)
         return;
-    if (!localPlayer || !localPlayer->isAlive() || ::freezetime || !localPlayer->getActiveWeapon() || !localPlayer->getActiveWeapon()->clip())
+    if (::freezetime || !localPlayer || !localPlayer->isAlive() || !localPlayer->getActiveWeapon() || !localPlayer->getActiveWeapon()->clip())
         return;
 
     auto dcos = [&](float angle) -> float { return cos(degreesToRadians(angle)); };
