@@ -833,16 +833,18 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         return false;
     };
 
-    auto fDistanceToWall = [&](int mode = 0, float ang = 0) -> float {
+    auto fDistanceToWall = [&](int mode = 0, float ang = 0, int dDistance = 0) -> float {
         Vector src = localPlayer->getEyePosition(), dst;
         Trace tr;
         ang = cmd->viewangles.y + ang;
 
-        if (mode == 1 or mode == 2) { // left and right
-            Vector delta = (mode == 1) ? Vector{dcos(ang - 90), dsin(ang - 90), 0} : Vector{dcos(ang + 90), dsin(ang + 90), 0};
+        if (mode == 0)
+            dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
+        else if (mode == 1 or mode == 2) { // left and right
+            Vector delta = (mode == 1) ? Vector{ dcos(ang - 90), dsin(ang - 90), 0 } : Vector{ dcos(ang + 90), dsin(ang + 90), 0 };
             float dist;
             dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
-            for (int d = 4; d < 16; d+=4) {
+            for (int d = 4; d < 16; d += 4) {
                 src += delta;
                 dst += delta;
                 interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
@@ -852,12 +854,19 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
             }
             return dist;
         }
-        else if (mode == 3) // higher than obstacle with max high
+        else if (mode == 3) { // higher than obstacle with max high
             src -= Vector{ 0,0,2 };
-        else if (mode == 4) // low obstacle
+            dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
+        }
+        else if (mode == 4) { // low obstacle
             src -= Vector{ 0,0,54 };
+            dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
+        }
+        else if (mode == 5) { // in front of player
+            src += Vector{ (125 + dDistance) * dcos(ang), (125 + dDistance) * dsin(ang), 0 };
+            dst = src + Vector{ 0, 0, -500 };
+        }
 
-        dst = src + Vector{ config->misc.distance * dcos(ang), config->misc.distance * dsin(ang), 0 };
         interfaces->engineTrace->traceRay({ src, dst }, 0x1, localPlayer.get(), tr);
 
         return (tr.endpos - src).length();
@@ -900,7 +909,12 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
         if (localPlayer->velocity().length2D() >= 100)
             ::walkbot_counter = 0;
 
-        if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && (localPlayer->flags() & 1)) {
+        if (fDistanceToWall(5) > 300 && distanceToWall >= config->misc.distance ||
+        fDistanceToWall(5, 10) > 300 && leftDistance >= config->misc.distance ||
+        fDistanceToWall(5, -10) > 300 && rightDistance >= config->misc.distance)
+            angles.y += 179;
+
+        if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && (localPlayer->flags() & 1) && fDistanceToWall(5, 0, 50) <= 300) {
             cmd->buttons |= UserCmd::IN_JUMP;
             angles.y += 1;
         }
