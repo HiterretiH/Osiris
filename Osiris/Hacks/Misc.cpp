@@ -910,8 +910,8 @@ void Misc::walkbot(UserCmd* cmd) noexcept {
             ::walkbot_counter = 0;
 
         if (fDistanceToWall(5) > 300 && distanceToWall >= config->misc.distance ||
-        fDistanceToWall(5, 10) > 300 && leftDistance >= config->misc.distance ||
-        fDistanceToWall(5, -10) > 300 && rightDistance >= config->misc.distance)
+        fDistanceToWall(5, 10) > 300 && fDistanceToWall(0, 10) >= config->misc.distance ||
+        fDistanceToWall(5, -10) > 300 && fDistanceToWall(0, -10) >= config->misc.distance)
             angles.y += 179;
 
         if ((fDistanceToWall(4) < 50 || ::walkbot_counter == 25 ) && fDistanceToWall(3) > 70 && (localPlayer->flags() & 1) && fDistanceToWall(5, 0, 50) <= 300) {
